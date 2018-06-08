@@ -9,14 +9,20 @@ try:
 except:
     json.dump([], open('usage.json', 'w'))
 
+try:
+    usage.remove('CHARGING')
+except:
+    pass
 _FINISH = False
+
+_ALERTS = True
 
 
 def now():
     return datetime.datetime.now().strftime("%m-%d-%Y %H:%M")
 
 def main():
-    global _FINISH, usage
+    global _FINISH, usage, _ALERTS
     while 1:
         i = input()
         if i == '-r':
@@ -38,15 +44,27 @@ def main():
                 print('using battery')
         elif i == '-q':
             _FINISH = True
-            try:
-                usage.remove('CHARGING')
+            if 'CHARGING' in usage:
+                c = 1
+                usage.remove('CHARGING') 
+            else:
+                c = 0
+            if c:
                 usage.append(now())
-            except:
-                pass
             break
+        elif i == '-a':
+            _ALERTS = False if _ALERTS else True
+            print('Alert Status: ' + str(_ALERTS))
+        elif i == '-c':
+            print('Are you sure? This will clear all data (Y/N)')
+            if input().lower() == 'y':
+                usage = []
+
         else:
             print('unknown command')
-
+def lowBattery(percent):
+    cmd = ['osascript', '-e', 'display dialog "Warning: Battery is below ' +str(percent) + ' percent. Find a charger" with title "Battery Low"']
+    subprocess.Popen(cmd)
 
 
 def updateList():
@@ -61,6 +79,7 @@ def updateList():
         s = result.stdout.decode(encoding="utf-8", errors="strict")
         l = s.split("'")
         status = l[1]
+        currentBattery = int(s.split('\t')[1].split(';')[0].replace('%', ''))
         if status == 'AC Power' and not charging:
             charging = True
             print('-------CHARGING--------')
@@ -71,9 +90,16 @@ def updateList():
                 pass
             usage.append('CHARGING')
         if status == 'Battery Power' and charging:
+            if currentBattery == 20 and _ALERTS:
+                lowBattery(currentBattery)
+            elif currentBattery == 10 and _ALERTS:
+                lowBattery(currentBattery)
+            elif currentBattery == 5 and _ALERTS:
+                lowBattery(currentBattery)
             now = datetime.datetime.now()
             usage.append(now.strftime("%m-%d-%Y %H:%M"))
             charging = False
+        time.sleep(2)
         
 
         
@@ -86,4 +112,3 @@ if __name__ == "__main__":
     main()
     pilot.join()
     json.dump(usage, open('usage.json', 'w'))
-
