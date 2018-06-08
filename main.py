@@ -3,6 +3,7 @@ import datetime
 import time
 from threading import Thread
 import json
+# :)
 try:
     usage = json.load(open('usage.json'))
 except:
