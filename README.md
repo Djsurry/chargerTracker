@@ -4,6 +4,7 @@ as someone who constantly loses their charger, i made this to help me keep track
 Works with Mac OSX. Uses terminal and subprocesses. Easy, runs the background.
 
 ------------------------------USAGE--------------------------------------
+
 run the file, it will automatically start tracking charging times
 while its running, use these commands
 
