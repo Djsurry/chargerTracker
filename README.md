@@ -18,4 +18,8 @@ while its running, use these commands
 
 -s: gets status of charging right now
 
+-a: toggles alerts on or off
+
+-c: clear all data
+
 
