@@ -3,7 +3,7 @@ import datetime
 import time
 from threading import Thread
 import json
-# :)
+usage = []
 try:
     usage = json.load(open('usage.json'))
 except:
@@ -17,6 +17,7 @@ _FINISH = False
 
 _ALERTS = True
 
+_START = time.time()
 
 def now():
     return datetime.datetime.now().strftime("%m-%d-%Y %H:%M")
@@ -59,6 +60,8 @@ def main():
             print('Are you sure? This will clear all data (Y/N)')
             if input().lower() == 'y':
                 usage = []
+        elif i == '-t':
+            print('program has been running for ' + str(datetime.timedelta(seconds=666)))
 
         else:
             print('unknown command')
